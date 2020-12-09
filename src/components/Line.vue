@@ -1,29 +1,50 @@
 <template>
-  <div class="hello">
-    <ve-line :data="chartData" :settings="chartSettings"></ve-line>
+  <div class="hello" v-if="currentTabIndex === 0">
+    <c-heading as="h3" size="lg">按年份统计电影票房、数量、评分</c-heading>
+    <component :data="chartData_y" :extend="extend" :settings="{area: true}" :is="chartType_y"></component>
+    <c-heading as="h3" size="lg">按月份统计电影票房、数量、评分</c-heading>
+    <component :data="chartData_m" :extend="extend" :settings="{area: true}" :is="chartType_m"></component>
   </div>
 </template>
 
 <script>
 
+import {state} from '../store'
+import {arraySortBy, arrayItemValueToString} from "@/utils";
+
 export default {
+
   data() {
-    this.chartSettings = {
-      area: true
+    this.extend = {
+      series: {
+        label: {
+          normal: {
+            show: true
+          }
+        }
+      }
     }
     return {
-      chartData: {
-        columns: ['date', '票房', 'Order', 'OrderRate'],
-        rows: [
-          {'date': '1/1', '票房': 1393, 'Order': 566, 'OrderRate': 0.32},
-          {'date': '1/2', '票房': 3530, 'Order': 1566, 'OrderRate': 0.26},
-          {'date': '1/3', '票房': 2923, 'Order': 526, 'OrderRate': 0.76},
-          {'date': '1/4', '票房': 1723, 'Order': 2566, 'OrderRate': 0.49},
-          {'date': '1/5', '票房': 3792, 'Order': 766, 'OrderRate': 0.323},
-          {'date': '1/6', '票房': 4593, 'Order': 566, 'OrderRate': 0.78}
-        ]
+      chartType_m: 've-line',
+      chartType_y: 've-line',
+      switch: false
+    }
+  },
+  computed: {
+    currentTabIndex: () => state.currentTabIndex,
+    chartsData() {
+      return state.chartsContent.one
+    },
+    chartData_y() {
+      return {columns: ['年份', '数量', '平均分', '票房'], rows: arraySortBy(this.chartsData.year, '年份')}
+    },
+    chartData_m() {
+      return {
+        columns: ['月份', '数量', '平均分'],
+        rows: arraySortBy(arrayItemValueToString(this.chartsData.month, '月份'), '月份')
       }
     }
   }
+
 }
 </script>
