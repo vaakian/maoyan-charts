@@ -6,7 +6,7 @@ export const arraySortBy = (arr, key) => {
 }
 
 export const arrayItemValueToString = (arr, key) => {
-    if(arr) {
+    if (arr) {
         return arr.map(item => {
             if (typeof item[key] == 'number')
                 item[key] = item[key].toString()
@@ -14,4 +14,12 @@ export const arrayItemValueToString = (arr, key) => {
         })
     }
     return null
+}
+
+export const buildParams = (selection) => {
+    const params = new URLSearchParams({gt: selection.gt})
+    let {types, areas} = selection
+    types.forEach(item => params.append('type', item))
+    areas.forEach(item => params.append('area', item))
+    return params
 }
